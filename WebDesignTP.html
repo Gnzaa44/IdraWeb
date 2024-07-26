@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WEB DESIGN TP</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="WebDesignTP.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Incluyendo jQuery UI para el diálogo -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="WebDesignTP.js"></script>
+</head>
+<body>
+    <h1>Productos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Color</th>
+                <th>Capacidad</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>--</td>
+                <td><input type="text" id="name"></td>
+                <td><input type="text" id="color"></td>
+                <td><input type="text" id="capacity"></td>
+                <td><input type="text" id="price"></td>
+                <td><button onclick='createProduct()'>Agregar</button></td>
+        </tbody>
+    </table>
+    <!-- Modal para ver y editar producto -->
+    <div id="popUp">
+        <h2>Editar Producto</h2>
+        <form>
+            <label for="id2">ID:</label>
+            <input type="text" name="id2" readonly>
+            <hr>
+            <label for="name2">Nombre:</label>
+            <input type="text" name="name2"><br>
+            <label for="color2">Color:</label>
+            <input type="text" name="color2"><br>
+            <label for="capacity2">Capacidad:</label>
+            <input type="text" name="capacity2"><br>
+            <label for="price2">Precio:</label>
+            <input type="text" id="price2" name="price2"><br>
+            <button type="button" onclick="updateProduct()">Guardar</button>
+        </form>
+    </div>
+
+</body>
+</html>
