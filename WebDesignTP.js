@@ -7,6 +7,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function insertRow(product) {
     var tbody = document.getElementsByTagName('tbody')[0];
     var row = tbody.insertRow();
+    row.setAttribute('data-id', product.id);
     var cell = row.insertCell();
     cell.innerHTML = product.id;
     cell = row.insertCell();
@@ -37,7 +38,7 @@ function readProducts() {
             insertRow(e);
         });
     }).catch(error => {
-        console.error('Error al leer productos:', error); // Mensaje de error detallado
+        console.error('Error al leer productos:', error); // Manejo del error
     });
 }
 
@@ -54,7 +55,7 @@ function createProduct() {
 function deleteProduct(id) {
     remove(id).then(() => {
         console.log('Producto eliminado:', id); // Verifica el ID del producto eliminado
-        readProducts(); // Vuelve a leer los productos para actualizar la tabla
+        removeRow(id) // Vuelve a leer los productos para actualizar la tabla
     }).catch(error => {
         console.error('Error al eliminar producto:', error); // Mensaje de error detallado
     });
@@ -99,7 +100,16 @@ function updateProduct() {
         console.error('Error al actualizar producto:', error); // Mensaje de error detallado
     });
 }
-
+function removeRow(id) {
+    var tbody = document.getElementsByTagName('tbody')[0];
+    var rows = tbody.getElementsByTagName('tr');
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].getAttribute('data-id') === id.toString()) {
+            tbody.deleteRow(i);
+            break;
+        }
+    }
+}
 // PROMESAS
 
 function get() {
