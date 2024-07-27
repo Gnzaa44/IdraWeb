@@ -95,7 +95,7 @@ function updateProduct() {
 
     update(id, product).then(() => {
         $('#popUp').dialog('close');
-        readProducts(); // Vuelve a leer los productos para actualizar la tabla
+        refreshProduct(id, product)// Vuelve a leer los productos para actualizar la tabla
     }).catch(error => {
         console.error('Error al actualizar producto:', error); // Mensaje de error detallado
     });
@@ -217,5 +217,14 @@ function clearInputs() {
     document.getElementById('capacity').value= ''
     document.getElementById('price').value = ''
     document.getElementById('name').focus()
+}
+function refreshProduct(id, product) {
+    var row = document.querySelector(`tr[data-id='${id}']`);
+    if (row) {
+        row.cells[1].innerHTML = product.name;
+        row.cells[2].innerHTML = product.data.color || 'N/A';
+        row.cells[3].innerHTML = product.data.capacity || 'N/A';
+        row.cells[4].innerHTML = product.data.price || 'N/A';
+    }
 }
 
