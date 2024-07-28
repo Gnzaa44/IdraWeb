@@ -29,7 +29,7 @@ function insertRow(product) {
 
 function readProducts() {
     get().then(response => {
-        console.log('Productos leídos:', response); // Verifica los productos leídos
+        console.log('Productos leídos:', response); 
         var tbody = document.getElementsByTagName('tbody')[0];
         while (tbody.rows.length > 1) {
             tbody.deleteRow(1);
@@ -38,68 +38,44 @@ function readProducts() {
             insertRow(e);
         });
     }).catch(error => {
-        console.error('Error al leer productos:', error); // Manejo del error
+        console.error('Error al leer productos:', error);
     });
 }
 
 function createProduct() {
     add().then(response => {
-        console.log('Producto agregado:', response); // Verifica la respuesta del servidor
-        insertRow(response);// Vuelve a leer los productos para actualizar la tabla
+        console.log('Producto agregado:', response); 
+        insertRow(response);
        
     }).catch(error => {
-        console.error('Error al agregar producto:', error); // Mensaje de error detallado
+        console.error('Error al agregar producto:', error); 
     });
 }
 
 function deleteProduct(id) {
     remove(id).then(() => {
-        console.log('Producto eliminado:', id); // Verifica el ID del producto eliminado
-        removeRow(id) // Vuelve a leer los productos para actualizar la tabla
+        console.log('Producto eliminado:', id); 
+        removeRow(id) 
     }).catch(error => {
-        console.error('Error al eliminar producto:', error); // Mensaje de error detallado
+        console.error('Error al eliminar producto:', error);
     });
 }
 
 function viewProduct(product) {
-    document.getElementsByName('id2')[0].value = product.id;
-    document.getElementsByName('name2')[0].value = product.name;
-    document.getElementsByName('color2')[0].value = product.data?.color || '';
-    document.getElementsByName('capacity2')[0].value = product.data?.capacity || '';
-    document.getElementsByName('price2')[0].value = product.data?.price || '';
+    updateModalFields(product)
     $('#popUp').dialog({
         closeText: ''
     }).css('font-size', '13px');
 }
-
-function updateProduct() {
-    var id = document.getElementsByName('id2')[0].value;
-    var name = document.getElementsByName('name2')[0].value;
-    var color = document.getElementsByName('color2')[0].value;
-    var capacity = document.getElementsByName('capacity2')[0].value;
-    var price = document.getElementsByName('price2')[0].value;
-    
-    // Ensure price is handled correctly
-    if (price === '') {
-        price = null;
-    }
-    
-    var product = {
-        'name': name,
-        'data': {
-            'color': color,
-            'capacity': capacity,
-            'price': price
-        }
-    };
-
-    update(id, product).then(() => {
-        $('#popUp').dialog('close');
-        refreshProduct(id, product)// Vuelve a leer los productos para actualizar la tabla
-    }).catch(error => {
-        console.error('Error al actualizar producto:', error); // Mensaje de error detallado
-    });
+function updateModalFields(product) {
+    document.getElementsByName('id2')[0].value = product.id;
+    document.getElementsByName('name2')[0].value= product.name;
+    document.getElementsByName('color2')[0].value = product.data?.color || '';
+    document.getElementsByName('capacity2')[0].value = product.data?.capacity || '';
+    document.getElementsByName('price2')[0].value = product.data?.price || '';
 }
+
+
 function removeRow(id) {
     var tbody = document.getElementsByTagName('tbody')[0];
     var rows = tbody.getElementsByTagName('tr');
@@ -211,6 +187,7 @@ function update(id, product) {
         request.send(JSON.stringify(product));
     });
 }
+//
 function clearInputs() {
     document.getElementById('name').value = ''
     document.getElementById('color').value = ''
@@ -225,6 +202,51 @@ function refreshProduct(id, product) {
         row.cells[2].innerHTML = product.data.color || 'N/A';
         row.cells[3].innerHTML = product.data.capacity || 'N/A';
         row.cells[4].innerHTML = product.data.price || 'N/A';
+    }
+}
+function updateProduct() {
+    if (document.getElementsByName('name2')[0].value.trim() !== '' &&
+        document.getElementsByName('color2')[0].value.trim() !== '' &&
+        document.getElementsByName('capacity2')[0].value.trim() !== '' &&
+        document.getElementsByName('price2')[0].value.trim() !== '') {
+
+        var id = document.getElementsByName('id2')[0].value;
+        var name = document.getElementsByName('name2')[0].value;
+        var color = document.getElementsByName('color2')[0].value;
+        var capacity = document.getElementsByName('capacity2')[0].value;
+        var price = document.getElementsByName('price2')[0].value;
+
+        var product = {
+            'id': id,
+            'name': name,
+            'data': {
+                'color': color,
+                'capacity': capacity,
+                'price': price
+            }
+        };
+
+        update(id, product).then(() => {
+            var rows = document.querySelectorAll('tr');
+            rows.forEach(row => {
+                if (row.getAttribute('data-id') === id) {
+                    row.cells[1].innerHTML = name;
+                    row.cells[2].innerHTML = color;
+                    row.cells[3].innerHTML = capacity;
+                    row.cells[4].innerHTML = price;
+                    row.cells[5].innerHTML = `
+                        <button onclick='viewProduct(${JSON.stringify({id, name, data: {color, capacity, price}})})'>Ver</button>
+                        <button onclick='deleteProduct(${JSON.stringify(product.id)})'>Eliminar</button>
+                    `;
+                }
+            });
+            $('#popUp').dialog('close');
+            clearInputs();
+        }).catch(error => {
+            console.error('Error al actualizar producto:', error);
+        });
+    } else {
+        console.error('Todos los campos deben estar llenos.');
     }
 }
 
