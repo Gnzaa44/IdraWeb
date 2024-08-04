@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
     $('#popUp').hide();
     readProducts();
 });
-function insertRow(product) {
+function insertRow(product, isFromAPI = false) {
     var tbody = document.getElementsByTagName('tbody')[0];
     var row = tbody.insertRow();
     row.setAttribute('data-id', product.id);
@@ -19,10 +19,15 @@ function insertRow(product) {
     cell = row.insertCell();
     cell.innerHTML = product.data?.price || 'N/A';
     cell = row.insertCell();
-    cell.innerHTML = `
-        <button onclick='viewProduct(${JSON.stringify(product)})'>Ver</button>
-        <button onclick='deleteProduct(${JSON.stringify(product.id)})'>Eliminar</button>
-    `;
+
+    if (!isFromAPI) {
+        cell.innerHTML = `
+            <button onclick='viewProduct(${JSON.stringify(product)})' type="button" class="btn btn-info">Ver</button>
+            <button onclick='deleteProduct(${JSON.stringify(product.id)})' type="button" class="btn btn-danger">Eliminar</button>
+        `;
+    } else {
+        cell.innerHTML = '';
+    }
     clearInputs()
 }
 
@@ -35,7 +40,7 @@ function readProducts() {
             tbody.deleteRow(1);
         }
         response.forEach(e => {
-            insertRow(e);
+            insertRow(e, true);
         });
     }).catch(error => {
         console.error('Error al leer productos:', error);
@@ -122,13 +127,13 @@ function add() {
             'name': document.getElementById('name').value,
             'data' : dat
         };
-        console.log('Agregando producto:', product); // Log del producto que se va a agregar
+        console.log('Agregando producto:', product);
         request.onload = () => {
             if (request.status === 201 || request.status === 200) {
                 resolve(JSON.parse(request.responseText));
             } else {
-                console.error('Estado de la respuesta:', request.status); // Estado de la respuesta en caso de error
-                console.error('Respuesta del servidor:', request.responseText); // Respuesta del servidor en caso de error
+                console.error('Estado de la respuesta:', request.status); 
+                console.error('Respuesta del servidor:', request.responseText); 
                 reject(`Error: ${request.status} ${request.statusText}`);
             }
         };
@@ -148,8 +153,8 @@ function remove(id) {
             if (request.status === 204 || request.status === 200) {
                 resolve(request.response);
             } else {
-                console.error('Estado de la respuesta:', request.status); // Estado de la respuesta en caso de error
-                console.error('Respuesta del servidor:', request.responseText); // Respuesta del servidor en caso de error
+                console.error('Estado de la respuesta:', request.status); 
+                console.error('Respuesta del servidor:', request.responseText); 
                 reject(`Error: ${request.status} ${request.statusText}`);
             }
         };
@@ -173,7 +178,7 @@ function update(id, product) {
                 'price': document.getElementsByName('price2').value || null
             }
         }
-        console.log('Actualizando producto:', product); // Log del producto que se va a actualizar
+        console.log('Actualizando producto:', product); 
         request.onload = () => {
             if (request.status === 200) {
                 resolve(JSON.parse(request.responseText));
@@ -235,8 +240,8 @@ function updateProduct() {
                     row.cells[3].innerHTML = capacity;
                     row.cells[4].innerHTML = price;
                     row.cells[5].innerHTML = `
-                        <button onclick='viewProduct(${JSON.stringify({id, name, data: {color, capacity, price}})})'>Ver</button>
-                        <button onclick='deleteProduct(${JSON.stringify(product.id)})'>Eliminar</button>
+                        <button onclick='viewProduct(${JSON.stringify({id, name, data: {color, capacity, price}})})' type="button" class="btn btn-info">Ver</button>
+                        <button onclick='deleteProduct(${JSON.stringify(product.id)})' type="button" class="btn btn-danger">Eliminar</button>
                     `;
                 }
             });

@@ -1,13 +1,17 @@
 table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 15px;
+}
+thead{
+    text-align: center;
 }
 table, th, td {
     border: 1px solid black;
 }
 th, td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
 }
 button {
     margin: 5px;
@@ -15,3 +19,7 @@ button {
 #popUp {
     display: none;
 }
+input{
+    background: none;
+}
+
